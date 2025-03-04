@@ -1,21 +1,20 @@
 package unibank.web.app.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-
 @Entity
+@Builder
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "bank_user")
 public class User {
 
     @Id
@@ -38,9 +37,15 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToMany
     private List<String> roles;
 
     @OneToOne(mappedBy = "owner")
     private Card card;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Account> accounts;
 }
+
