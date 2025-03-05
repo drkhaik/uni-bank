@@ -9,36 +9,35 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-//@Table(name = "cards")
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Card {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String cid;
+    private String uid;
 
+    private double balance;
+    private String accountName;
     @Column(unique = true, nullable = false)
-    private String cardNumber;
-    private String cardHolder;
-    private Double balance;
-    private String cvv;
-    private LocalDateTime exp;
-    private String pin;
-    private String billingAddress;
+    private long accountNumber;
+    private String currency;
+    private String code;
+    private String label;
+    private char symbol;
 
     @CreationTimestamp
-    private LocalDateTime issuedAt;
+    private LocalDateTime createdAt;
     @UpdateTimestamp
-    private LocalDateTime lastUpdated;
+    private LocalDateTime updatedAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 }
