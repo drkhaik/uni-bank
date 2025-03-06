@@ -5,5 +5,6 @@ import unibank.web.app.entity.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-    User findByUserNameIgnoreCase(String userName);
+
+    User findByUsernameIgnoreCase(String username);
 }

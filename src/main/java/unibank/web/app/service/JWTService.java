@@ -19,7 +19,7 @@ public class JWTService {
     private String jwtSecret;
 
     @Value("${jwExpirationTime}")
-    private String jwtExpirationTime;
+    private long jwtExpirationTime;
 
     public SecretKey generateKey() {
         byte[] keyBytes = jwtSecret.getBytes();
@@ -34,7 +34,8 @@ public class JWTService {
      */
     public String generateToken(String username) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + jwtExpirationTime);
+        Date expiration = new Date(now.getTime() +  jwtExpirationTime);
+
 
         return Jwts.builder()
                 .subject(username)
