@@ -26,8 +26,8 @@ public class AccountHelper {
             "GBP", "British Pound",
             "JPY", "Japanese Yen",
             "NGN", "Nigerian Naira",
-            "INR", "Indian Rupee"
-
+            "INR", "Indian Rupee",
+            "VND", "Vietnamese Dong"
     );
 
     private final Map<String, String> SYMBOLS = Map.of(
@@ -36,7 +36,8 @@ public class AccountHelper {
             "GBP", "£",
             "JPY", "¥",
             "NGN", "₦",
-            "INR", "₹"
+            "INR", "₹",
+            "VND", "₫"
     );
 
     public Account createAccount(AccountDto accountDto, User user) {
