@@ -19,7 +19,7 @@ public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String cid;
+    private String cardId;
 
     @Column(unique = true, nullable = false)
     private String cardNumber;
