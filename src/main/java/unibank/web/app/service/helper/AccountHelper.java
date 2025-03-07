@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import unibank.web.app.dto.AccountDto;
-import unibank.web.app.entity.Account;
-import unibank.web.app.entity.User;
+import unibank.web.app.entity.*;
 import unibank.web.app.repository.AccountRepository;
+import unibank.web.app.repository.TransactionRepository;
 import unibank.web.app.uitl.RandomUtil;
 
 import javax.naming.OperationNotSupportedException;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -19,6 +20,7 @@ import java.util.Map;
 public class AccountHelper {
 
     private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
 
     private final Map<String, String> CURRENCIES = Map.of(
             "USD", "United States Dollar",
@@ -63,9 +65,44 @@ public class AccountHelper {
         return accountRepository.save(account);
     }
 
+    public Transaction performTransfer(Account senderAccount, Account receiverAccount, double amount, User user) throws Exception {
+        validateSufficientFunds(senderAccount, (amount*1.01));
+        senderAccount.setBalance(senderAccount.getBalance() - amount*1.01);
+        receiverAccount.setBalance(receiverAccount.getBalance() + amount);
+        accountRepository.saveAll(List.of(senderAccount, receiverAccount));
+        var senderTransaction = Transaction.builder()
+                .account(senderAccount)
+                .status(Status.COMPLETED)
+                .type(Type.WITHDRAW)
+                .txFee(amount * 0.01)
+                .amount(amount)
+                .owner(senderAccount.getOwner())
+                .build();
+        var receiverTransaction = Transaction.builder()
+                .account(senderAccount)
+                .status(Status.COMPLETED)
+                .type(Type.DEPOSIT)
+                .amount(amount)
+                .owner(receiverAccount.getOwner())
+                .build();
+        return transactionRepository.saveAll(List.of(senderTransaction, receiverTransaction)).getFirst();
+    }
+
     public void validateAccountNonExistForUser(String code, String uid) throws Exception {
         if(accountRepository.existsByCodeAndOwnerUid(code, uid)){
             throw new Exception("Account of this type already exists for this user.");
+        }
+    }
+
+    public void validateAccountOwner(Account account,User user) throws OperationNotSupportedException {
+        if (!account.getOwner().getUid().equals(user.getUid())) {
+            throw new OperationNotSupportedException("Invalid account owner");
+        }
+    }
+
+    public void validateSufficientFunds(Account account, double amount) throws Exception {
+        if (account.getBalance() < amount) {
+            throw new OperationNotSupportedException("Insufficient funds in the account");
         }
     }
 
