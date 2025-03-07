@@ -93,7 +93,7 @@ public class AccountHelper {
         }
     }
 
-    public void validateAccountOwener(Account account,User user) throws OperationNotSupportedException {
+    public void validateAccountOwner(Account account,User user) throws OperationNotSupportedException {
         if (!account.getOwner().getUid().equals(user.getUid())) {
             throw new OperationNotSupportedException("Invalid account owner");
         }
