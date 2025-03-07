@@ -8,6 +8,7 @@ import unibank.web.app.dto.AccountDto;
 import unibank.web.app.entity.*;
 import unibank.web.app.repository.AccountRepository;
 import unibank.web.app.repository.TransactionRepository;
+import unibank.web.app.service.TransactionService;
 import unibank.web.app.uitl.RandomUtil;
 
 import javax.naming.OperationNotSupportedException;
@@ -21,6 +22,7 @@ public class AccountHelper {
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+    private final TransactionService transactionService;
 
     private final Map<String, String> CURRENCIES = Map.of(
             "USD", "United States Dollar",
@@ -70,22 +72,9 @@ public class AccountHelper {
         senderAccount.setBalance(senderAccount.getBalance() - amount*1.01);
         receiverAccount.setBalance(receiverAccount.getBalance() + amount);
         accountRepository.saveAll(List.of(senderAccount, receiverAccount));
-        var senderTransaction = Transaction.builder()
-                .account(senderAccount)
-                .status(Status.COMPLETED)
-                .type(Type.WITHDRAW)
-                .txFee(amount * 0.01)
-                .amount(amount)
-                .owner(senderAccount.getOwner())
-                .build();
-        var receiverTransaction = Transaction.builder()
-                .account(senderAccount)
-                .status(Status.COMPLETED)
-                .type(Type.DEPOSIT)
-                .amount(amount)
-                .owner(receiverAccount.getOwner())
-                .build();
-        return transactionRepository.saveAll(List.of(senderTransaction, receiverTransaction)).getFirst();
+        var senderTransaction = transactionService.createAccountTransaction(amount, Type.WITHDRAW, amount * 0.01, user, senderAccount);
+        var receiverTransaction = transactionService.createAccountTransaction(amount, Type.DEPOSIT, 0.00, receiverAccount.getOwner(), receiverAccount);
+        return senderTransaction;
     }
 
     public void validateAccountNonExistForUser(String code, String uid) throws Exception {
