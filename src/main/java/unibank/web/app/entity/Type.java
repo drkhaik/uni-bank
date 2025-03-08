@@ -5,5 +5,5 @@ public enum Type {
     DEPOSIT,
     TRANSFER,
     DEBIT,
-    CREDIT
+    CONVERSION, CREDIT
 }
