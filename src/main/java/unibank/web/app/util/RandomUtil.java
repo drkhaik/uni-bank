@@ -1,4 +1,4 @@
-package unibank.web.app.uitl;
+package unibank.web.app.util;
 
 public class RandomUtil {
 

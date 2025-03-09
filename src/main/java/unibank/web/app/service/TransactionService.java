@@ -29,4 +29,30 @@ public class TransactionService {
         return transactionRepository.save(tx);
     }
 
+    public List<Transaction> getAllTransactions(String page, User user) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), 10, Sort.by("createdAt").ascending());
+        return transactionRepository.findAllByOwnerUid(user.getUid(), pageable).getContent();
+    }
+
+    public Transaction createCardTransaction(double amount, Type type, double txFee, User user, Card card) {
+        Transaction tx = Transaction.builder()
+                .txFee(txFee)
+                .amount(amount)
+                .type(type)
+                .card(card)
+                .status(Status.COMPLETED)
+                .owner(user)
+                .build();
+        return transactionRepository.save(tx);
+    }
+
+    public List<Transaction> getTransactionsByAccountId(String accountId, String page, User user) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), 10, Sort.by("createdAt").ascending());
+        return transactionRepository.findAllByAccountAccountIdAndOwnerUid(accountId, user.getUid(), pageable).getContent();
+    }
+
+    public List<Transaction> getTransactionsByCardId(String cardId, String page, User user) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), 10, Sort.by("createdAt").ascending());
+        return transactionRepository.findAllByCardCardIdAndOwnerUid(cardId, user.getUid(), pageable).getContent();
+    }
 }
