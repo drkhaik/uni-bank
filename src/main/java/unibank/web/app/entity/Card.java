@@ -1,5 +1,6 @@
 package unibank.web.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,11 +23,12 @@ public class Card {
     private String cardId;
 
     @Column(unique = true, nullable = false)
-    private String cardNumber;
+    private long cardNumber;
     private String cardHolder;
     private Double balance;
     private String cvv;
     private LocalDateTime exp;
+    @JsonIgnore
     private String pin;
     private String billingAddress;
 
@@ -37,8 +39,10 @@ public class Card {
 
     @OneToOne
     @JoinColumn(name = "owner_id")
+    @JsonIgnore
     private User owner;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Transaction> transactions;
 }

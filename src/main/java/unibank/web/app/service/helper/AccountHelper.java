@@ -2,7 +2,6 @@ package unibank.web.app.service.helper;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 import unibank.web.app.dto.AccountDto;
 import unibank.web.app.dto.ConvertDto;
@@ -11,7 +10,7 @@ import unibank.web.app.repository.AccountRepository;
 import unibank.web.app.repository.TransactionRepository;
 import unibank.web.app.service.ExchangeRateService;
 import unibank.web.app.service.TransactionService;
-import unibank.web.app.uitl.RandomUtil;
+import unibank.web.app.util.RandomUtil;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
@@ -138,8 +137,8 @@ public class AccountHelper {
         validateDifferentCurrencyType(convertDto);
         validateAccountOwnership(convertDto, uid);
         validateAmount(convertDto.getAmount());
-        validateSufficientFunds(accountRepository.findByCodeAndOwnerUid(
-                convertDto.getFromCurrency(),uid).get(),
+        validateSufficientFunds(
+                accountRepository.findByCodeAndOwnerUid(convertDto.getFromCurrency(),uid).get(),
                 convertDto.getAmount()
         );
     }
@@ -173,4 +172,7 @@ public class AccountHelper {
         return fromAccountTransaction;
     }
 
+    public Account save(Account usdAccount) {
+        return accountRepository.save(usdAccount);
+    }
 }
